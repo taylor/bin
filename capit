@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#if1=eth0
+#if2=lo
+s=3000
+
+
+for a in $* ; do
+  if [[ "$a" =~ "^eth[0-9]" ]] ; then
+    interfaces="$a $interfaces"
+  else
+    args="${args} ${a}"
+  fi
+done
+#interfaces="$*"
+
+#argname=$(echo $args |sed -i 's/ /_/g')
+
+if [ "$1" = "" ] ; then
+  echo "usage: $0 <if1> [if2] [...]"
+  exit 0
+fi
+
+start_captures() {
+  D=$(date +%Y%m%d-%H%M%S)
+  #for i in $if1 $if2 ; do
+  for i in $interfaces ; do
+    cap=${i}-${D}.pcap
+    echo tcpdump -i $i -s ${s} -w $cap ${args}
+    tcpdump -i $i -s ${s} -w $cap ${args} &
+  done
+}
+
+
+
+function onexit() {
+    local exit_status=${1:-$?}
+    echo "Terminating all background jobs"
+    jt=$(jobs | wc -l)
+    for (( i=1; i<=$jt; i++ )) ; do
+      kill -TERM %$i
+    done
+    echo Exiting $0 with $exit_status
+    exit $exit_status
+}
+
+trap onexit 1 2 3 15 ERR
+
+start_captures
+
+while [ 1 ] ; do
+  sleep 1
+done
+
+

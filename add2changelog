@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ "$1" = "" ] ; then
+	echo "usage $0 <CHANGELOG FILE> [\"comment\"]"
+	exit 1
+elif [ ! -f "$1" ] ; then
+	echo "can not access file $1"
+	exit 1
+fi
+
+changelog="$1"
+shift
+comment="$*"
+
+if [ "$comment" = "" ] ; then
+	echo "Enter a 1 line comment.  Press enter when done."
+	echo -n "C: "
+	read C
+	comment="$C"
+fi
+
+D=$(date +%Y.%m.%d-%H:%M:%S)
+echo "Added to $changelog: "
+echo "$D $comment" | tee -a $changelog

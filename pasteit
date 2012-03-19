@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## paste stuff to a pastebin from args or stdin
+##
+## priority is args which are treated as one big string
+## otherwise reads stdin
+##
+## Currently using ix from http://ix.io
+
+[ "$1" = "" ] && content=$(cat) || content="$*"
+
+echo "$content" | ix -i 0 -

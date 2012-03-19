@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# http://www.madboa.com/geek/openssl/
+
+me=$(basename $0)
+
+if [ "$me"  = "encssl" ] ; then
+        if [ "$2" = "" ] ; then
+                echo "usage: $0 <infile> <outfile>"
+                exit 1
+        fi
+        openssl enc -aes-256-cbc -a -salt -in $1 -out $2
+elif [ "$me"  = "decssl" ] ; then
+        if [ "$1" = "" ] ; then
+                echo "usage: $0 <infile>"
+                exit 1
+        fi
+        openssl enc -d -aes-256-cbc -a -in $1
+fi

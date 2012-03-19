@@ -1,0 +1,23 @@
+#!/usr/bin/ruby
+# don't want this on jruby ever
+
+case ARGV.count
+when 1
+  m=1
+  n=ARGV[0].to_i
+when 2
+  m=ARGV[0].to_i
+  n=ARGV[1].to_i
+when 3
+  #TODO: implement this"
+  puts "Stepping not yet implemented"
+  exit
+  m=ARGV[0].to_i
+  y=ARGV[1].to_i
+  n=ARGV[2].to_i
+else
+  puts "usage: seq M <step> <N>"
+  exit
+end
+
+m.upto(n).each {|x| puts x}
