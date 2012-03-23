@@ -1,0 +1,11 @@
+#!/bin/bash
+
+mypath=$(dirname $0)
+name="$1"
+shift
+if [ -x $mypath/git-save-$name ] ; then
+  exec git save-"$name" "$@"
+else
+  echo "usage: git save <command>"
+  git save- 2>&1 |grep -vE "'save-'|save$" 1>&2
+fi
