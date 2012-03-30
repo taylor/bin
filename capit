@@ -1,9 +1,6 @@
 #!/bin/bash
 
-#if1=eth0
-#if2=lo
 s=3000
-
 
 for a in $* ; do
   if [[ "$a" =~ "^eth[0-9]" ]] ; then
@@ -12,9 +9,6 @@ for a in $* ; do
     args="${args} ${a}"
   fi
 done
-#interfaces="$*"
-
-#argname=$(echo $args |sed -i 's/ /_/g')
 
 if [ "$1" = "" ] ; then
   echo "usage: $0 <if1> [if2] [...]"
@@ -30,8 +24,6 @@ start_captures() {
     tcpdump -i $i -s ${s} -w $cap ${args} &
   done
 }
-
-
 
 function onexit() {
     local exit_status=${1:-$?}
@@ -51,5 +43,3 @@ start_captures
 while [ 1 ] ; do
   sleep 1
 done
-
-
