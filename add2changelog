@@ -1,15 +1,22 @@
 #!/bin/bash
 
-if [ "$1" = "" ] ; then
+DEFAULTLOG=/root/CHANGELOG
+
+if [ -z "$DEFAULTLOG" -a -z "$1" ] ; then
 	echo "usage $0 <CHANGELOG FILE> [\"comment\"]"
 	exit 1
-elif [ ! -f "$1" ] ; then
-	echo "can not access file $1"
+elif [ -n "$DEFAULTLOG"  ] ; then
+  changelog=$DEFAULTLOG
+else
+  changelog="$1"
+  shift
+fi
+
+if [ ! -f "$changelog" ] ; then
+	echo "can not access file $changelog"
 	exit 1
 fi
 
-changelog="$1"
-shift
 comment="$*"
 
 if [ "$comment" = "" ] ; then
