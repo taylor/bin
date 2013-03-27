@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Usage: rotate-screen [absolute] [action]
+#
+# ACTIONS:
+#   flip|invert - invert the screen from the current rotation
+#   left        - rotate to the left
+#   right       - rotate to the right
+#
+# OPTION:
+#   absolute - this forces the rotation to be relative to "normal" rotation vs current
+
 output="LVDS1"
 default_rotation="normal"
 
@@ -11,9 +21,14 @@ case $cr in
   *) current_rotation="normal" ;;
 esac
 
+# Act like we are in normal mode so the switch will go to the default rotation
+if [ "$1" = "absolute" ] ; then
+  current_rotation=normal
+  shift
+fi
 
 case $1 in
-flip|inverted)
+flip|inverted|invert)
   case $current_rotation in
     left) rotation="right" ;;
     right) rotation="left" ;;
@@ -26,10 +41,20 @@ upsidedown|forfriend|look)
   rotation="inverted"
   ;;
 left)
-  rotation="left"
+  case $current_rotation in
+    left) rotation="inverted" ;;
+    inverted) rotation="right" ;;
+    right) rotation="normal" ;;
+    *) rotation="left" ;;
+  esac
   ;;
 right)
-  rotation="right"
+  case $current_rotation in
+    right) rotation="inverted" ;;
+    inverted) rotation="left" ;;
+    left) rotation="normal" ;;
+    *) rotation="right" ;;
+  esac
   ;;
 *)
   rotation="normal"
