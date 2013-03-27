@@ -1,0 +1,40 @@
+#!/bin/bash
+
+output="LVDS1"
+default_rotation="normal"
+
+cr=$(xrandr -q |grep " connected" | awk '{print $4}' | cut -b 1)
+case $cr in
+  l) current_rotation="left" ;;
+  r) current_rotation="right" ;;
+  i) current_rotation="inverted" ;;
+  *) current_rotation="normal" ;;
+esac
+
+
+case $1 in
+flip|inverted)
+  case $current_rotation in
+    left) rotation="right" ;;
+    right) rotation="left" ;;
+    normal) rotation="inverted" ;;
+    #inverted) rotation="normal" ;;
+    *) rotation="normal" ;;
+  esac
+  ;;
+upsidedown|forfriend|look)
+  rotation="inverted"
+  ;;
+left)
+  rotation="left"
+  ;;
+right)
+  rotation="right"
+  ;;
+*)
+  rotation="normal"
+  ;;
+esac
+
+
+xrandr --output "$output" --rotate "$rotation"
