@@ -27,8 +27,12 @@ elif [ "$system" = "Linux" ] ; then
   #fixme: check for xscreensaver/gnome
   if app-available gnome-screensaver-command ; then
     gnome-screensaver-command -a -l
+  elif app-available xtrlock ; then
+    xtrlock
   elif app-available slock ; then
     slock
+  elif app-available slimlock ; then
+    slimlock
   else
     echo "no screen lock application found"
     exit 1
