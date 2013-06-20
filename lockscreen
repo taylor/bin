@@ -1,0 +1,40 @@
+#!/bin/bash
+
+system=`uname -s`
+
+function app-available() {
+  if which $1 > /dev/null 2>&1 ; then
+    true
+  else
+    false
+  fi
+}
+
+if [ "$system" = "Darwin" ] ; then
+  check_askforpassword_host="-currentHost read com.apple.screensaver askForPassword"
+  check_askforpassword="read com.apple.screensaver askForPassword"
+  origstate=$(defaults $check_askforpassword_host 2> /dev/null  || defaults $check_askforpassword 2> /dev/null )
+
+  toggle_askforpassword 1 > /dev/null 2>&1
+  osascript -e 'activate application "ScreenSaverEngine"'
+
+  if [ ! "$1" = "-q" ] ; then
+    echo -n "Press ENTER "
+    read
+    toggle_askforpassword $origstate > /dev/null 2>&1
+  fi
+elif [ "$system" = "Linux" ] ; then
+  #fixme: check for xscreensaver/gnome
+  if app-available gnome-screensaver-command ; then
+    gnome-screensaver-command -a -l
+  elif app-available slock ; then
+    slock
+  else
+    echo "no screen lock application found"
+    exit 1
+  fi
+else
+  echo "not implemented for your system ($system) yet"
+fi
+
+
