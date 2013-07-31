@@ -5,11 +5,11 @@ DEFAULTLOG=/root/CHANGELOG
 if [ -z "$DEFAULTLOG" -a -z "$1" ] ; then
 	echo "usage $0 <CHANGELOG FILE> [\"comment\"]"
 	exit 1
-elif [ -n "$DEFAULTLOG"  ] ; then
-  changelog=$DEFAULTLOG
-else
+elif [ -f "$1"  ] ; then
   changelog="$1"
   shift
+else
+  changelog="$DEFAULTLOG"
 fi
 
 if [ ! -f "$changelog" ] ; then

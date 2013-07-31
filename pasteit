@@ -9,4 +9,7 @@
 
 [ "$1" = "" ] && content=$(cat) || content="$*"
 
-echo "$content" | ix -i 0 -
+#echo "$content" | ix -i 0 -
+
+echo "$content" | curl -n -F 'f:1=<-' http://ix.io
+

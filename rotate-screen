@@ -10,34 +10,45 @@
 # OPTION:
 #   absolute - this forces the rotation to be relative to "normal" rotation vs current
 
-output="LVDS1"
+default_output="LVDS1"
 default_rotation="normal"
 
-cr=$(xrandr -q |grep " connected" | awk '{print $4}' | cut -b 1)
+read -a foo <<< $(xrandr -q |grep " connected" |head -n 1| awk '{print $1" "$4}')
+output=${foo[0]}
+cr=${foo[1]}
+
 case $cr in
-  l) current_rotation="left" ;;
-  r) current_rotation="right" ;;
-  i) current_rotation="inverted" ;;
+  l|left) current_rotation="left" ;;
+  r|right) current_rotation="right" ;;
+  i|inverted) current_rotation="inverted" ;;
   *) current_rotation="normal" ;;
 esac
 
-# Act like we are in normal mode so the switch will go to the default rotation
-if [ "$1" = "absolute" ] ; then
-  current_rotation=normal
-  shift
+me=$(basename $0)
+
+if [ "$me" = "flip-screen" -a -z "$1" ] ; then
+  action="flip"
+else
+  action="$1"
 fi
 
-case $1 in
+# Act like we are in normal mode so the switch will go to the default rotation
+if [ "$action" = "absolute" ] ; then
+  current_rotation=normal
+fi
+
+
+case $action in
 flip|inverted|invert)
   case $current_rotation in
     left) rotation="right" ;;
     right) rotation="left" ;;
     normal) rotation="inverted" ;;
-    #inverted) rotation="normal" ;;
+    inverted) rotation="normal" ;;
     *) rotation="normal" ;;
   esac
   ;;
-upsidedown|forfriend|look)
+upsidedown|forfriend|look|up)
   rotation="inverted"
   ;;
 left)
