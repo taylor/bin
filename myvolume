@@ -1,0 +1,138 @@
+#!/bin/bash
+
+me=$(basename $0)
+
+#VOLINC=2500
+VOLINC=10
+
+show_usage() {
+  echo "usage: $me <up|down|mute|unmute|toggle-mute|N>"
+}
+
+
+if [ "$1" = "-h" -o "$1" = "-help" ] ; then
+  show_usage
+  exit
+fi
+
+USEPULSEAUDIO=0
+USEJACK=0
+
+if [ -n "$(pidof pulseaudio)" ] ; then
+  USEPULSEAUDIO=1
+elif [ -n "$(pidof jackd)" ] ; then
+  USEJACK=1
+fi
+
+
+getvolchg() {
+  VOLCHG=""
+  echo getvolchg $VOLCHG 1>&2
+  case $1 in
+    up)
+      [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--increase $VOLINC" || VOLCHG="${VOLINC}+"
+      ;;
+    down)
+      VOLCHG="${VOLINC}-"
+      [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--decrease $VOLINC" || VOLCHG="${VOLINC}-"
+      ;;
+  esac
+  echo getvolchg $VOLCHG 1>&2
+  echo $VOLCHG
+}
+
+ACTION=""
+
+case $me in
+  myvol|vol|volume)
+    if [ -z "1" ] ; then
+      show_usage
+    fi
+
+    echo "volume $1"
+
+    if [ "$1" = "mute" -o "$1" = "unmute" -o "$1" = "mute-toggle" -o "$1" = "toggle" ] ; then
+      case $1 in
+        mute)
+          echo "mute"
+          ACTION="mute"
+          ;;
+        unmute)
+          echo "unmute"
+          ACTION="unmute"
+          ;;
+        toggle-mute|toggle)
+          echo "toggling mute"
+          ACTION="togglemute"
+          ;;
+      esac
+    elif [ ! "$1" = "up" -a ! "$1" = "down" ] ; then
+      [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--${1}" || VOLCHG="${1}%"
+      #VOLCHG="${1}%"
+      ACTION="volchange"
+    else
+      VOLCHG=$(getvolchg $1)
+      ACTION="volchange"
+    fi
+    ;;
+  mylouder|louder|volup)
+    echo "louder"
+    VOLCHG=$(getvolchg up)
+    ACTION="volchange"
+    ;;
+  quieter|voldown)
+    echo "down"
+    VOLCHG=$(getvolchg down)
+    ACTION="volchange"
+    ;;
+  mute)
+    echo "mute"
+    ACTION="mute"
+    ;;
+  unmute)
+    echo "unmute"
+    ACTION="unmute"
+    ;;
+  toggle-mute)
+    echo "toggling mute"
+    ACTION="togglemute"
+    ;;
+  *)
+    echo "unknown action $me"
+    exit
+    ;;
+esac
+
+set -x
+if [ $USEPULSEAUDIO = 1 ] ; then
+  if [ -x "`which pamixer`" ] ; then
+    case $ACTION in
+      mute)
+        pamixer --mute
+        ;;
+      unmute)
+        pamixer --unmute
+        ;;
+      togglemute)
+        pamixer --toggle-mute
+        ;;
+      volchange)
+        pamixer ${VOLCHG}
+        ;;
+    esac
+  fi
+#elif [ $USEJACK = 1 ] ; then
+else
+  case $ACTION in
+    mute|unmute)
+      amixer -q set Master $ACTION
+      ;;
+    togglemute)
+      echo "toggling mute with alsa (amixer) not yet supported"
+      ;;
+    volchange)
+      amixer -q set Master ${VOLCHG} 2> /dev/null || amixer -q set PCM ${VOLCHG}
+      ;;
+  esac
+fi
+set +x
