@@ -1,0 +1,19 @@
+#!/bin/bash
+
+me=$(basename $0)
+
+case $me in
+  mymute|mute)
+    #MUTESTATE=1
+    MUTESTATE="mute"
+    ;;
+  *)
+    #MUTESTATE=0
+    MUTESTATE="unmute"
+    ;;
+esac
+
+#pactl set-sink-mute 0 $MUTESTATE
+#pactl set-sink-mute 1 $MUTESTATE
+
+amixer -q set Master $MUTESTATE
