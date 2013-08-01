@@ -1,0 +1,13 @@
+#!/bin/sh
+
+MYIP=""
+
+[[ -z "$MYIP" ]] && MYIP=`curl -m 5 -s ip.codecafe.com 2> /dev/null`
+[[ -z "$MYIP" ]] && MYIP=`curl -m 5 -s ip.ixx.io 2> /dev/null`
+[[ -z "$MYIP" ]] && MYIP=`curl -m 5 -s icanhazip.com 2> /dev/null`
+[[ -z "$MYIP" ]] && MYIP=`curl -m 5 -s http://www.whatismyip.com/automation/n09230945.asp 2> /dev/null`
+[[ -z "$MYIP" ]] && MYIP=`dig myip.opendns.com @resolver2.opendns.com +short`
+
+[[ -z "$MYIP" ]] && echo "FAILURE!!!" 1>&2
+
+echo $MYIP

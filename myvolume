@@ -2,6 +2,8 @@
 
 me=$(basename $0)
 
+DEBUG=0
+
 #VOLINC=2500
 VOLINC=10
 
@@ -27,7 +29,6 @@ fi
 
 getvolchg() {
   VOLCHG=""
-  echo getvolchg $VOLCHG 1>&2
   case $1 in
     up)
       [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--increase $VOLINC" || VOLCHG="${VOLINC}+"
@@ -37,7 +38,7 @@ getvolchg() {
       [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--decrease $VOLINC" || VOLCHG="${VOLINC}-"
       ;;
   esac
-  echo getvolchg $VOLCHG 1>&2
+  [[ $DEBUG = 1 ]] && echo getvolchg $VOLCHG 1>&2
   echo $VOLCHG
 }
 
@@ -66,9 +67,8 @@ case $me in
           ACTION="togglemute"
           ;;
       esac
-    elif [ ! "$1" = "up" -a ! "$1" = "down" ] ; then
-      [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--${1}" || VOLCHG="${1}%"
-      #VOLCHG="${1}%"
+    elif [ ! "$1" = "up" -a ! "$1" = "down" ] ; then # TODO: louder, quieter... blah refactor all the dups.. DRY
+      [[ $USEPULSEAUDIO = 1 ]] && VOLCHG="--set-volume ${1}" || VOLCHG="${1}%"
       ACTION="volchange"
     else
       VOLCHG=$(getvolchg $1)
@@ -103,7 +103,7 @@ case $me in
     ;;
 esac
 
-set -x
+[[ $DEBUG = 1 ]] && set -x
 if [ $USEPULSEAUDIO = 1 ] ; then
   if [ -x "`which pamixer`" ] ; then
     case $ACTION in
@@ -135,4 +135,4 @@ else
       ;;
   esac
 fi
-set +x
+[[ $DEBUG = 1 ]] && set +x
