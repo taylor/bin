@@ -1,0 +1,32 @@
+#!/bin/bash
+
+t="$1"
+wt=2
+
+player="paplay"
+start_sound="$HOME/Music/pomodoro/crank.wav"
+warning_sound="$HOME/Music/pomodoro/tictac.wav"
+stop_sound="$HOME/Music/pomodoro/clockalarm.wav"
+
+echo -ne "Start!"
+$player $start_sound
+echo -ne "\b\b\b\b\b      "
+echo -ne "\b\b\b\b\b\b\b\b\b\b"
+
+echo -ne "$t"
+c=$t
+while (( c > 0 )) ; do
+  echo -ne "\b\b\b\b\b\b\b\b\b         \b\b\b\b\b\b\b\b"
+  echo -ne "$c"
+  sleep 1
+  (( c = $c - 1 ))
+  if [ "$c" = "$wt" -a ! "$wt" = "$t" ] ; then
+    $player $warning_sound &
+  fi
+done
+echo -ne "\b \b"
+echo -ne "$c"
+
+echo -ne "\b\b\bStop!"
+$player $stop_sound
+echo ""
