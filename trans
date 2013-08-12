@@ -32,6 +32,10 @@ case $1 in
     action="--max"
     inc="1"
     ;;
+  [0-9]*)
+    action=""
+    inc="$1"
+    ;;
   *)
     #echo "unknown action $1"
     #exit
@@ -42,4 +46,9 @@ case $1 in
 esac
 
 cmdopts="$cmdopts $clickopt"
-$cmd $cmdopts $action $inc
+
+if [ "$QUIET" ] ; then
+  $cmd $cmdopts $action $inc > /dev/null 2>&1 
+else
+  $cmd $cmdopts $action $inc
+fi
