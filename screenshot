@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# uses scrot and imgur
+
+post=0
+
+if [ "$1" = "-i" -o "$1" = "-p" ] ; then
+  postex="-e imgur"
+  shift
+fi
+
+exec scrot "$postex" $@
