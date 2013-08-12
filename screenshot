@@ -1,12 +1,32 @@
 #!/bin/bash
 
-# uses scrot and imgur
+# uses scrot for capture
+#  and imgur for posting
 
 post=0
+scrotargs=""
+selectopt="-s"
+filename='%Y-%m-%d-%H%M_$wx$h.png'
 
-if [ "$1" = "-i" -o "$1" = "-p" ] ; then
-  postex="-e imgur"
-  shift
-fi
+while [ true ] ; do
+  case "$1" in
+    -i|-imgur|-p|-post)
+      postex="-e imgur"
+      shift
+      ;;
+    -a)
+      selectopt=""
+      shift
+      ;;
+    *)
+      scrotargs="$scrotargs $1"
+      shift
+      ;;
+  esac
+  [[ -z "$1" ]] && break
+done
 
-exec scrot "$postex" $@
+scrotargs="$scrotargs $selectopt $postex"
+
+
+exec scrot $scrotargs $filename
