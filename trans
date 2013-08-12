@@ -1,0 +1,45 @@
+#!/bin/bash
+
+cmd="transset-df"
+cmdopts="-a"
+
+if [ ! -x "/usr/bin/$cmd" ] ; then
+  echo "install transset"
+  exit
+fi
+
+def_inc="0.05"
+clickopt=""
+
+[[ "$1" = "click" ]] &&
+  clickopt="-c"
+
+
+case $1 in
+  up)
+    action="--inc"
+    inc=${2:-$def_inc}
+    ;;
+  down)
+    action="--dec"
+    inc=${2:-$def_inc}
+    ;;
+  min)
+    action="--min"
+    inc="0.5"
+    ;;
+  max)
+    action="--max"
+    inc="1"
+    ;;
+  *)
+    #echo "unknown action $1"
+    #exit
+    action=""
+    cmdopts="-a -t"
+    inc="0.9"
+    ;;
+esac
+
+cmdopts="$cmdopts $clickopt"
+$cmd $cmdopts $action $inc
