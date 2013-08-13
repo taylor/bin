@@ -7,11 +7,13 @@ post=0
 scrotargs=""
 selectopt="-s"
 filename='%Y-%m-%d-%H%M_$wx$h.png'
+execcmd="imgur"
+postex=""
 
 while [ true ] ; do
   case "$1" in
     -i|-imgur|-p|-post)
-      postex="-e imgur"
+      postex="-e"
       shift
       ;;
     -a)
@@ -25,8 +27,12 @@ while [ true ] ; do
   esac
   [[ -z "$1" ]] && break
 done
+scrotargs="$scrotargs $selectopt"
 
-scrotargs="$scrotargs $selectopt $postex"
+sleep 0.25
+if [ -n "$postex" ] ; then
+  exec scrot "$filename" $scrotargs $postex "$execcmd \$f"
+else
+  exec scrot "$filename" $scrotargs
+fi
 
-
-exec scrot $scrotargs $filename
