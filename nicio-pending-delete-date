@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+
+require 'open-uri'
+require 'chronic'
+require 'nokogiri'
+require 'pp'
+
+
+if ARGV[0].nil?
+  puts "Usage: nicio-expire-notice domainname"
+  exit 1
+end
+
+
+class NicIODomain
+  attr_accessor :hdoc, :domain
+  @@queryurl = 'http://nic.io/cgi-bin/whois?query='
+  def initialize(domain)
+    @domain = domain
+    url = @@queryurl + domain
+    html = open("taylor.io.html").readlines.join("")
+    @doc = Nokogiri(html)
+    #doc = Nokogiri(open(url))
+  end
+
+  def is_pendingdelete?
+    'pendingDelete' == @doc.search("//td[@id='bodyfill']/p/b").first.inner_html
+  end
+
+  def expiredate
+    return nil unless is_pendingdelete?
+
+    domain_data = @doc.search("//td[@id='bodyfill']/p").first.inner_html
+    #Domain <b>pendingDelete</b> - expired 2013-07-26, unless it is renewed it will
+    domain_data.scan(/-\sexpired\s([^,]*),/)[0][0]
+  end
+
+  def deletedate
+    Chronic.parse('90 days from', :now => Chronic.parse(expiredate))
+  end
+end
+
+dom = ARGV[0]
+nih = NicIODomain.new(dom)
+
+if nih.expiredate.nil?
+  puts "This domain is not expired"
+else
+  puts "Domain #{dom} expired on #{nih.expiredate} and will be deleted on #{nih.deletedate}"
+end
