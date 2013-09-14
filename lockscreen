@@ -2,6 +2,11 @@
 
 system=`uname -s`
 
+me=$(basename $0)
+
+[[ "$me" = "toggle-lockscreen" ]] && action="toggle"
+[[ -n "$1" ]] && action="$1"
+
 function app-available() {
   if which $1 > /dev/null 2>&1 ; then
     true
@@ -24,15 +29,30 @@ if [ "$system" = "Darwin" ] ; then
     toggle_askforpassword $origstate > /dev/null 2>&1
   fi
 elif [ "$system" = "Linux" ] ; then
+  case $action in
+    toggle)
+      xautolock -toggle
+      exit 0
+      ;;
+    enable)
+      xautolock -enable
+      exit 0
+      ;;
+    disable)
+      xautolock -disable
+      exit 0
+      ;;
+  esac
+
   #fixme: check for xscreensaver/gnome
-  if app-available gnome-screensaver-command ; then
+  if app-available slimlock ; then
+    slimlock
+  elif app-available gnome-screensaver-command ; then
     gnome-screensaver-command -a -l
   elif app-available xtrlock ; then
     xtrlock
   elif app-available slock ; then
     slock
-  elif app-available slimlock ; then
-    slimlock
   else
     echo "no screen lock application found"
     exit 1
