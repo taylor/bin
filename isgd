@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "$1" = "-c" ] ; then
+  shift
+  CLIP=1
+fi
+
+url="$(echo $1|sed 's/.*\/\///g')"
+
+if [ -z "$url" ] ; then
+  echo "usage: $(basename $0) <http://www.example.com/some/path>"
+  exit 0
+fi
+
+isgdurl=$(curl -qs "http://is.gd/create.php?format=simple&url=${url}")
+
+if [ "$CLIP" = "1" ] ; then
+  if [ -n "`which xclip`" ] ; then
+    echo -n "$isgdurl" | xclip -i
+  elif [ -n "`which pbcopy`" ] ; then
+    echo "$isgdurl" | pbcopy
+  fi
+fi
+
+echo $isgdurl

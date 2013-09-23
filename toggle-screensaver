@@ -1,0 +1,15 @@
+#!/bin/bash
+
+dpms_state=$(xset q | awk '/DPMS is/ {print $3}')
+
+if [ "$dpms_state" = "Disabled" ] ; then
+  xset +dpms
+  xset s on
+  xset s blank
+  echo "Enabled"
+else
+  xset -dpms
+  xset s off
+  xset s noblank
+  echo "Disabled"
+fi

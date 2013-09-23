@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DEFAULT_TERMINAL_EMULATOR="xterm"
+TERMINAL_EMULATOR=/usr/bin/gnome-terminal
+TERMINAL_EMULATOR=/usr/bin/roxterm
+
+if [ -x $TERMINAL_EMULATOR ] ; then
+  TE="$TERMINAL_EMULATOR"
+else
+  TE="$DEFAULT_TERMINAL_EMULATOR"
+fi
+
+exec $TE $@

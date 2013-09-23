@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ ! `uname -s` = "Darwin" ] ; then
+  echo "This is an OS X (Darwin) only script"
+  exit 255
+fi
+
+service=Ethernet
+curstate=`networksetup -getwebproxy $service |grep ^Enabled | awk -F: '{print $2}' | sed 's/[^A-Za-z]//g' `
+cursecurestate=`networksetup -getsecurewebproxy $service |grep ^Enabled | awk -F: '{print $2}' | sed 's/[^A-Za-z]//g' `
+
+
+if [ "$curstate" = "Yes" ] ; then
+  state=off
+  echo "http off"
+else
+  state=on
+  echo "http on"
+fi
+
+if [ "$cursecurestate" = "Yes" ] ; then
+  securestate=off
+  echo "https off"
+else
+  securestate=on
+  echo "https on"
+fi
+
+networksetup -setwebproxystate $service $state
+networksetup -setsecurewebproxystate $service $securestate

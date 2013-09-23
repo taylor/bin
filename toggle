@@ -1,0 +1,21 @@
+#!/bin/bash
+
+me="$(basename $0)"
+mypath=$(dirname $0)
+
+if [ -z "$1" ] ; then
+  echo "$me <something>"
+  exit 1
+fi
+
+what="$1"
+shift
+
+if [ -x "${0}-${what}" ] ; then
+  exec ${0}-${what} $@
+
+else
+    echo "Try one of the following:"
+    cd $mypath
+    ls toggle-*| sed 's/toggle-/\t/'
+fi

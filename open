@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require "uri"
+url = URI.extract(ARGV[0]).first
+BROWSER=ENV['BROWSER'] || "sensible-browser"
+
+unless url.nil?
+  puts url
+  system("#{BROWSER} #{url}")
+else
+  system("mimeopen #{ARGV.join(' ')}")
+end
