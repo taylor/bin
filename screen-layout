@@ -1,0 +1,34 @@
+#!/bin/bash
+
+layout=$1
+
+# Use lxrandr or arandr to create the profiles for this
+# AND/OR use autorandr --save to save the profile for auto use
+
+if [ -z "$layout" ] ; then
+  echo "usage: $0 <layout>"
+  exit 0
+fi
+
+if [ "$layout" = "auto" ] ; then
+  xrandr --auto
+  if [ -x /usr/bin/autorandr ] ; then
+    autorandr -c
+  fi
+  exit 0
+fi
+
+# TODO: check for .sh and add it then
+if [ ! -x $HOME/.screenlayout/$layout ] ; then
+  if [ ! -x $HOME/.screenlayout/${layout}.sh ] ; then
+    echo "Could not find layout $layout"
+    exit 1
+  else
+    layout="${layout}.sh"
+  fi
+fi
+
+$HOME/.screenlayout/$layout
+
+# restart window manager
+( sleep 3 ; pkill -SIGHUP awesome ) &

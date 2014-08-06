@@ -2,7 +2,14 @@
 
 # $Id: $
 
-key="$HOME/.ssh/id_rsa-4096-20080925.pub"
+if [ "$1" = "-k" ] ; then
+  key="$2"
+  shift ; shift
+elif [ -n "$DEFAULT_SSH_KEY" ] ; then
+  key="$HOME/.ssh/$DEFAULT_SSH_KEY"
+else
+  key="$HOME/.ssh/id_rsa-4096-20080925.pub"
+fi
 
 if [ ! -f "$key" ] ; then
 	echo "key $key not found"

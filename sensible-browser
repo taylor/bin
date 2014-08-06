@@ -1,14 +1,22 @@
 #!/bin/bash
 
 DEFAULT_BROWSER="links"
+DEFAULT_GUIBROWSER="chromium"
 TERMINAL_EMULATOR="xterm"
 TERMINAL_EMULATOR_EXEC="-e"
+
+gui_browser_list="firefox chromium chrome google-chrome"
 
 if [ -z "$BROWSER" ] ; then
   BROWSER="$DEFAULT_BROWSER"
 fi
 
-gui_browser_list="firefox chromium chrome google-chrome"
+if [ -z "$GUI_BROWSER" ] ; then
+  GUI_BROWSER="$DEFAULT_GUIBROWSER"
+fi
+
+gui_browser_list="$GUI_BROWSER $gui_browser_list"
+
 for b in $gui_browser_list ; do
   GUI_BROWSER=$(which $b 2> /dev/null)
   [[ -n "$GUI_BROWSER" ]] && break

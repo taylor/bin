@@ -1,6 +1,7 @@
 #!/bin/bash
 
-PYGMENTIZE="/opt/local/bin/pygmentize-2.7"
+#PYGMENTIZE="/opt/local/bin/pygmentize-2.7"
+PYGMENTIZE="$(which pygmentize)"
 
 if [ ! -t 0 ];then
         file=/dev/stdin

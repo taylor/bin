@@ -1,3 +1,10 @@
 #!/bin/sh
 
-mvim $@
+system=`uname -s`
+if [ "$system" = "Darwin" ] ; then
+  if [ -x "$(which mvim)" ] ; then
+    mvim $@
+  fi
+else
+  gvim $@
+fi

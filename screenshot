@@ -3,6 +3,8 @@
 # uses scrot for capture
 #  and imgur for posting
 
+SCROT=scrot
+#SCROT=escrotum
 post=0
 scrotargs=""
 selectopt="-s"
@@ -10,14 +12,49 @@ filename='%Y-%m-%d-%H%M_$wx$h.png'
 execcmd="imgur"
 postex=""
 
+function usage() {
+  me=$(basename $0)
+  echo "$me [options] [scrot options]"
+  echo "Options for $me:"
+  echo "  -i|-imgur|-p|-u   - Upload to imgur.com"
+  echo "  -s|-select        - Select part of the screen"
+  echo "  -a|-all           - Capture all of the screen (default)"
+  echo "  -t|-w|-wait       - Wait 5 seconds before capture"
+  echo "  -h|-help|-usage   - This help"
+}
+
+wait=0
 while [ true ] ; do
   case "$1" in
-    -i|-imgur|-p|-post)
+    -h|-help|--help|-usage)
+      usage
+      exit
+      ;;
+    -c|-clipboard)
+      USE_CLIPBOARD=1
+      if [ "$SCROT" = "escrotum" ] ; then
+        postex=""
+        scrotargs="$scrotargs -C"
+      else
+        postex="-e"
+        execcmd="$HOME/bin/imgclip.py"
+      fi
+      shift
+      ;;
+    -i|-imgur|-p|-post|-u)
       postex="-e"
       shift
       ;;
-    -a)
+    -s|-select)
+      selectopt="-s"
+      shift
+      ;;
+    -a|-all)
       selectopt=""
+      shift
+      ;;
+    -t|-w)
+      wait=5
       shift
       ;;
     *)
@@ -29,10 +66,19 @@ while [ true ] ; do
 done
 scrotargs="$scrotargs $selectopt"
 
-sleep 0.25
-if [ -n "$postex" ] ; then
-  exec scrot "$filename" $scrotargs $postex "$execcmd \$f"
-else
-  exec scrot "$filename" $scrotargs
+if [ ! "$wait" = 0 ] ; then
+  sleep $wait
 fi
 
+sleep 0.50
+if [ "$USE_CLIPBOARD" = 1 ] ; then
+  exec $SCROT "$filename" $scrotargs $postex "$execcmd \$f" 2> /dev/null
+  # exec $SCROT "$filename" $scrotargs
+  # copyq write image/png - < "$filename"
+  # copyq select 0
+  # rm -v "$filename"
+elif [ -n "$postex" ] ; then
+  exec $SCROT "$filename" $scrotargs $postex "$execcmd \$f"
+else
+  exec $SCROT "$filename" $scrotargs
+fi

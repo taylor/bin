@@ -6,10 +6,18 @@ if [ "$dpms_state" = "Disabled" ] ; then
   xset +dpms
   xset s on
   xset s blank
+  which xscreensaver > /dev/null
+  if [ $? = 0 ] ; then
+    nohup xscreensaver -no-splash > /dev/null 2>&1 &
+  fi
   echo "Enabled"
 else
   xset -dpms
   xset s off
   xset s noblank
+  which xscreensaver-command > /dev/null
+  if [ "$?" = 0 ] ; then
+    xscreensaver-command -exit > /dev/null 2>&1
+  fi
   echo "Disabled"
 fi

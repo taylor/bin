@@ -12,7 +12,7 @@ def_inc="0.05"
 clickopt=""
 
 [[ "$1" = "click" ]] &&
-  clickopt="-c"
+  clickopt="-c" && shift
 
 
 case $1 in

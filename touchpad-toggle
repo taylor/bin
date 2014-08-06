@@ -1,12 +1,20 @@
 #!/bin/bash
 
-synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0')
+## get the id
+# xinput --list |grep "SynPS/2 Synaptics TouchPad"
+devid=11
+
+xinput set-prop $devid "Device Enabled" $(xinput list-props 11 | grep -c "Device Enabled.*:.*0")
 exit $?
 
-state=$(synclient -l |grep -i touch | awk -F"= " '{print $2}')
-case $state in
-  1) newstate=0 ;;
-  0) newstate=1 ;;
-esac
-
-/usr/bin/synclient TouchpadOff=$newstate
+# synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0')
+# exit $?
+# 
+# state=$(synclient -l |grep -i touch | awk -F"= " '{print $2}')
+# case $state in
+#   1) newstate=0 ;;
+#   0) newstate=1 ;;
+# esac
+# 
+# #/usr/bin/synclient TouchpadOff=$newstate
+# 

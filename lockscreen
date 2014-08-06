@@ -7,6 +7,8 @@ me=$(basename $0)
 [[ "$me" = "toggle-lockscreen" ]] && action="toggle"
 [[ -n "$1" ]] && action="$1"
 
+# TODO: add prefererred lock app
+
 function app-available() {
   if which $1 > /dev/null 2>&1 ; then
     true
@@ -45,20 +47,32 @@ elif [ "$system" = "Linux" ] ; then
   esac
 
   #fixme: check for xscreensaver/gnome
-  if app-available slimlock ; then
-    slimlock
-  elif app-available gnome-screensaver-command ; then
-    gnome-screensaver-command -a -l
-  elif app-available xtrlock ; then
-    xtrlock
-  elif app-available slock ; then
-    slock
-  else
-    echo "no screen lock application found"
-    exit 1
-  fi
+  LOCKERS="xscreensaver-command slimlock gnome-screensaver-command xtrlock slock"
+  for l in $LOCKERS ; do
+    if app-available $l ; then
+      locker=$l
+      break
+    else
+      echo "Locker application $l not found"
+      #exit 1
+    fi
+  done
+
+  case $locker in
+    xscreensaver-command)
+      xscreensaver-command -lock ; exit 0 ;;
+    slimlock)
+      slimlock ; exit 0 ;;
+    gnome-screensaver-command)
+      gnome-screensaver-command -a -l ; exit 0 ;;
+    xtrlock)
+      xtrlock ; exit 0 ;;
+    slock)
+      slock ; exit 0 ;;
+    *)
+      echo "unknown locker application"
+      exit 1 ;;
+  esac
 else
   echo "not implemented for your system ($system) yet"
 fi
-
-

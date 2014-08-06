@@ -11,5 +11,5 @@
 
 #echo "$content" | ix -i 0 -
 
-echo "$content" | curl -n -F 'f:1=<-' http://ix.io
+echo "$content" | curl -n -F 'f:1=<-' "http://ix.io/?login=ixx&token=peaches"
 
