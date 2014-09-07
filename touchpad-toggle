@@ -2,9 +2,9 @@
 
 ## get the id
 # xinput --list |grep "SynPS/2 Synaptics TouchPad"
-devid=11
+devid=20
 
-xinput set-prop $devid "Device Enabled" $(xinput list-props 11 | grep -c "Device Enabled.*:.*0")
+xinput set-prop $devid "Device Enabled" $(xinput list-props $devid | grep -c "Device Enabled.*:.*0")
 exit $?
 
 # synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0')
